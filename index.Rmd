@@ -11,4 +11,4 @@ output:
 
 ![](https://media.giphy.com/media/drXGoW1iudhKw/giphy.gif)
 
-Find more about me [here](about.html)
+Find more about me [here](About.html)
