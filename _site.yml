@@ -8,7 +8,7 @@ navbar:
     - text: "Experience"
       href: experience.html
     - text: "Programming"
-      href: programing.html
+      href: pro.html
     - text: "More"
       href: more.html
   right:
