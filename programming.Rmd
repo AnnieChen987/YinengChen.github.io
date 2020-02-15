@@ -1,5 +1,5 @@
 ---
-title: "about"
+title: "Programming"
 output: 
   html_document:
     code_folding: hide
@@ -9,4 +9,8 @@ output:
 
 
 
-# my CV
+### R
+
+1. [plot_ly](plotly.html)
+
+1. [dashboard](dashboard.html)
