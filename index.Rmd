@@ -11,4 +11,14 @@ output:
 
 ![](https://media.giphy.com/media/drXGoW1iudhKw/giphy.gif)
 
-Find more about me [here](About.html)
+Find more about me [here](about.html)
+
+# Let's add some links
+
+
+I often use [google](https://www.google.com) to do **data science**. 
+
+
+## let's add an image
+
+here's my cat:
