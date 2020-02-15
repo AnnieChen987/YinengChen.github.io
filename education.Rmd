@@ -16,7 +16,9 @@ _Master of Science (MS), Biostatistics/Pharmaceutical Biostatistics Track, expec
 Relevant Courses： Probability, Introduction to Randomized Clinical Trials, New Drug Development: Regulatory
 Overview, Analysis of Categorical Data Statistical Computing with SAS, etc
 
-## Undergraduate School
+Member of CASSA
+
+### Undergraduate School
 
 **China Pharmaceutical University (CPU), Nanjing, China**
 
