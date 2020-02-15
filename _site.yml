@@ -2,6 +2,15 @@ name: "Yay internet!"
 output_dir: "."
 navbar:
   title: "Yineng Chen"
+  left:
+    - text: "Education"
+      href: education.html
+    - text: "Experience"
+      href: experience.html
+    - text: "Programming"
+      href: programing.html
+    - text: "More"
+      href: more.html
   right:
     - text: "About"
       href: about.html
