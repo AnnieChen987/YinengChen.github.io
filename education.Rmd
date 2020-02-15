@@ -1,0 +1,25 @@
+---
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+### Graduate School
+
+**Columbia University, Mailman School of Public Health, New York, NY**
+
+_Master of Science (MS), Biostatistics/Pharmaceutical Biostatistics Track, expected May 2021_
+
+Relevant Courses： Probability, Introduction to Randomized Clinical Trials, New Drug Development: Regulatory
+Overview, Analysis of Categorical Data Statistical Computing with SAS, etc
+
+## Undergraduate School
+
+**China Pharmaceutical University (CPU), Nanjing, China**
+
+_Bachelor of Science (BS), Clinical Pharmacy July 2019_
+
+Top 1% in Clinical Pharmacy
