@@ -7,18 +7,11 @@ output:
     
 ---
 
-<h1 style="text-align:center">Welcome to the Yinegn Chen's website!</h1>
+<img src="images/yc2.jpg" style="width:35% ; border:10px solid; margin-right: 20px" align="left">
 
-<img src="images/yc-blue,jpg" style="width:50%" align="left" hspace="20">
+I am currently a student at the Columbia University Mailman School of Public Health, expecting to graduate in May 2021 with a Master of Science in Biostatistics and a focus on Pharmaceutical Statistics. I am especially interested in the application of biostatistics in Clinical trials.
+
+My full Resume is available [here](files/Yineng Chen Resume.pdf)
 
 Find more about me [here](about.html)
 
-# Let's add some links
-
-
-I often use [google](https://www.google.com) to do **data science**. 
-
-
-## let's add an image
-
-here's my cat:

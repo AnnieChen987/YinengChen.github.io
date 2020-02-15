@@ -1,7 +1,7 @@
 name: "Yay internet!"
 output_dir: "."
 navbar:
-  title: "Home"
+  title: "Yineng Chen"
   right:
     - text: "About"
       href: about.html
@@ -9,6 +9,8 @@ navbar:
       href: mailto:<yinengchen@outlook.com>
     - icon: fa-github fa-lg
       href: http://github.com/AnnieChen987/
+    - icon: fa-linkedin fa-lg
+      href: https://www.linkedin.com/in/yineng%EF%BC%88annie%EF%BC%89-chen-364bbbb5/?locale=en_US
 output:
   html_document:
-    theme: cerulean
+    theme: paper
