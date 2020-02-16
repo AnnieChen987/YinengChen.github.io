@@ -11,3 +11,5 @@ output:
 1. [plot_ly](plotly.html)
 
 1. [dashboard](dashboard.html)
+
+1. linear Regresssion [(course work)](salarycase.html)
