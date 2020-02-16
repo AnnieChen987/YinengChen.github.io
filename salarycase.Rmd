@@ -1,13 +1,15 @@
 ---
 title: "salary case"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
+This is a coursework project I did with a team of four students. I was the primary individual responsible for the building of linear regression models and visualization of data. In this project, we tried to figure out whether female faculty at a medical school earn less money than men, on average.
 
-These are codes we use in our final version:
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,message = FALSE,warning = FALSE)
+knitr::opts_chunk$set(echo = FALSE,message = FALSE,warning = FALSE)
 library(tidyverse)
 library(arsenal)
 library(knitr)
@@ -25,11 +27,11 @@ theme_set(theme_bw() + theme(legend.position = "bottom"))
 ```
 
 
-# Data exploration: descriptive and visualization
+### Data exploration: descriptive and visualization
 
 ```{r}
 # read dataset
-data_0=read_csv("./data/Lawsuit.csv") %>% 
+data_0 = read_csv("./data/Lawsuit.csv") %>% 
   janitor::clean_names()
 
 # add variables: total salary and mean salary
@@ -86,12 +88,14 @@ data_2=data_1 %>%
   mutate(
     log_sal=log(mean_sal)
   )
-ln_y = ggplot(data_2,aes(x=log_sal))+geom_histogram(aes(y=..density..)) + geom_density(col = "black",alpha=0)
+
+ln_y = ggplot(data_2,aes(x=log_sal))+geom_histogram(aes(y = ..density..)) + geom_density(col = "black",alpha=0)
+
 
 data_2=data_2 %>% 
     dplyr::select(-id,-mean_sal)
 
-ori_y + ln_y
+ln_y
 
 ```
 

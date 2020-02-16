@@ -313,49 +313,9 @@ $(document).ready(function () {
 </div>
 
 
-<p>These are codes we use in our final version:</p>
-<div id="data-exploration-descriptive-and-visualization" class="section level1">
-<h1>Data exploration: descriptive and visualization</h1>
-<pre class="r"><code># read dataset
-data_0=read_csv(&quot;./data/Lawsuit.csv&quot;) %&gt;% 
-  janitor::clean_names()
-
-# add variables: total salary and mean salary
-data=data_0 %&gt;% mutate(
-  total_sal=sal94+sal95,
-  mean_sal=total_sal/2
-) %&gt;% 
-  # get rid of 94 salary, 95 salary and total salary
-  dplyr::select(-sal94,-sal95,-total_sal)
-  
-
-# descriptive data
-
-my_labels2 &lt;- list(dept = &quot;Deptartment,n%&quot;, clin=&quot;Area of emphasis n%&quot;, cert=&quot;Certification,n%&quot;,prate=&quot;Publication rate&quot;,exper=&quot;Years since obtaining MD&quot;,
-                   mean_sal=&quot;Salary&quot;,rank=&quot;Rank,n%&quot;)
-
-my_controls &lt;- tableby.control(total = T,
-  test=T,  
-  digits=2,
-  numeric.stats = c(&quot;meansd&quot;, &quot;medianq1q3&quot;),
-  cat.stats = c(&quot;countpct&quot;),
-  stats.labels = list(
-    meansd =&quot;Mean (SD)&quot;,
-    medianq1q3 = &quot;Median (Q1, Q3)&quot;,
-    countpct = &quot;N (%)&quot;))
-
-data_1&lt;-data %&gt;% 
-  mutate(dept=factor(dept, labels=c(&quot;Molecular Biology&quot;,&quot;Physiology&quot;,&quot;Genetics&quot;,&quot;Pediatrics&quot;,&quot;Medicine&quot;,&quot;Surgery&quot;)),
-         gender=factor(gender, labels=c(&quot;Female&quot;,&quot;Male&quot;)),
-         clin=factor(clin, labels=c(&quot;Primarily research emphasis&quot;,&quot;Primarily clinical emphasis&quot;)),
-         cert=factor(cert, labels=c(&quot;not certified&quot;, &quot;Board certified&quot;)),
-         rank=factor(rank,label=c(&quot;Assistant&quot;,&quot;Associate&quot;,&quot;Full professor&quot;))
-         )
-
-# Table 1
-table &lt;- tableby(gender ~ dept + clin+ cert + prate+exper+rank+mean_sal, data=data_1,control=my_controls)
-c=summary(table, title = &quot;Table1:Descriptive statistics for by Gender and Test&quot;, labelTranslations = my_labels2, text=T)
-knitr::kable(c)</code></pre>
+<p>This is a coursework project I did with a team of four students. I was the primary individual responsible for the building of linear regression models and visualization of data. In this project, we tried to figure out whether female faculty at a medical school earn less money than men, on average.</p>
+<div id="data-exploration-descriptive-and-visualization" class="section level3">
+<h3>Data exploration: descriptive and visualization</h3>
 <table>
 <thead>
 <tr class="header">
@@ -551,67 +511,18 @@ knitr::kable(c)</code></pre>
 </tr>
 </tbody>
 </table>
+</div>
 <div id="distribution-of-y" class="section level2">
 <h2>distribution of y</h2>
-<pre class="r"><code>ori_y = ggplot(data_1,aes(x=mean_sal))+geom_histogram(aes(y=..density..)) + geom_density(col = &quot;black&quot;,alpha=0)</code></pre>
 <p>not normal</p>
-<pre class="r"><code>library(HH)
-
-data_2=data_1 %&gt;% 
-  mutate(
-    log_sal=log(mean_sal)
-  )
-ln_y = ggplot(data_2,aes(x=log_sal))+geom_histogram(aes(y=..density..)) + geom_density(col = &quot;black&quot;,alpha=0)
-
-data_2=data_2 %&gt;% 
-    dplyr::select(-id,-mean_sal)
-
-ori_y + ln_y</code></pre>
 <p><img src="salarycase_files/figure-html/unnamed-chunk-3-1.png" width="90%" /></p>
-</div>
 </div>
 <div id="visualization" class="section level1">
 <h1>Visualization</h1>
-<pre class="r"><code>library(patchwork)
-
-rank_gen = data_1 %&gt;%
-  group_by(gender) %&gt;%
-  ggplot(aes(x = rank, y = mean_sal, color = gender)) + 
-    geom_boxplot() 
-
-dept_gen = data_1 %&gt;%
-  group_by(gender) %&gt;%
-  ggplot(aes(x = dept, y = mean_sal, color = gender)) + 
-    geom_boxplot()
-
-clin_gen = data_1 %&gt;%
-  group_by(gender) %&gt;%
-  ggplot(aes(x = clin, y = mean_sal, color = gender)) + 
-    geom_boxplot()
-
-cert_gen = data_1 %&gt;%
-  group_by(gender) %&gt;%
-  ggplot(aes(x = cert, y = mean_sal, color = gender)) + 
-    geom_boxplot()
-
-exp_gen = data_1 %&gt;%
-  group_by(gender) %&gt;%
-  ggplot(aes(x = exper, y = mean_sal, color = gender)) + 
-    geom_point() +
-  geom_smooth(method=&quot;lm&quot;,aes(color=gender),se=FALSE)
-
-(rank_gen + dept_gen)/(clin_gen + cert_gen)</code></pre>
-<p><img src="salarycase_files/figure-html/unnamed-chunk-4-1.png" width="90%" /></p>
-<pre class="r"><code>exp_gen</code></pre>
-<p><img src="salarycase_files/figure-html/unnamed-chunk-4-2.png" width="90%" /></p>
+<p><img src="salarycase_files/figure-html/unnamed-chunk-4-1.png" width="90%" /><img src="salarycase_files/figure-html/unnamed-chunk-4-2.png" width="90%" /></p>
 </div>
 <div id="confounder-one-by-one" class="section level1">
 <h1>confounder one by one</h1>
-<pre class="r"><code>gender_only=lm(log_sal~gender,data=data_2)
-## coeffecient of gener is 0.3853
-
-gender_dept=lm(log_sal~gender+dept,data=data_2)
-summary(gender_dept)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = log_sal ~ gender + dept, data = data_2)
@@ -635,11 +546,6 @@ summary(gender_dept)</code></pre>
 ## Residual standard error: 0.2534 on 254 degrees of freedom
 ## Multiple R-squared:  0.7578, Adjusted R-squared:  0.752 
 ## F-statistic: 132.4 on 6 and 254 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code>#### coeffecient of gener changed from 0.3853 to  0.20521(&gt;10%)
-## dept is a confounder
-
-gender_clin=lm(log_sal~gender+clin,data=data_2)
-summary(gender_clin)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = log_sal ~ gender + clin, data = data_2)
@@ -659,11 +565,6 @@ summary(gender_clin)</code></pre>
 ## Residual standard error: 0.3694 on 258 degrees of freedom
 ## Multiple R-squared:  0.4769, Adjusted R-squared:  0.4728 
 ## F-statistic: 117.6 on 2 and 258 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code>#### coeffecient of gener changed from 0.3853 to  0.33718(12.4%)
-## clin is a confounder
-
-gender_cert=lm(log_sal~gender+cert,data=data_2)
-summary(gender_cert)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = log_sal ~ gender + cert, data = data_2)
@@ -683,11 +584,6 @@ summary(gender_cert)</code></pre>
 ## Residual standard error: 0.4127 on 258 degrees of freedom
 ## Multiple R-squared:  0.3473, Adjusted R-squared:  0.3423 
 ## F-statistic: 68.65 on 2 and 258 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code>#### coeffecient of gener changed from 0.3853 to  0.33285(13.6%)
-## cert is a confounder
-
-gender_prate=lm(log_sal~gender+prate,data=data_2)
-summary(gender_prate)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = log_sal ~ gender + prate, data = data_2)
@@ -707,11 +603,6 @@ summary(gender_prate)</code></pre>
 ## Residual standard error: 0.3031 on 258 degrees of freedom
 ## Multiple R-squared:  0.6479, Adjusted R-squared:  0.6452 
 ## F-statistic: 237.4 on 2 and 258 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code>#### coeffecient of gener changed from 0.3853 to  0.251814(&gt;10%)
-## prate is a confouder
-
-gender_exper=lm(log_sal~gender+exper,data=data_2)
-summary(gender_exper)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = log_sal ~ gender + exper, data = data_2)
@@ -731,11 +622,6 @@ summary(gender_exper)</code></pre>
 ## Residual standard error: 0.4637 on 258 degrees of freedom
 ## Multiple R-squared:  0.1757, Adjusted R-squared:  0.1693 
 ## F-statistic:  27.5 on 2 and 258 DF,  p-value: 1.488e-11</code></pre>
-<pre class="r"><code>#### coeffecient of gener changed from 0.3853 to  0.30755(&gt;10%)
-## exper is a confounder
-
-gender_rank=lm(log_sal~gender+rank,data=data_2)
-summary(gender_rank)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = log_sal ~ gender + rank, data = data_2)
@@ -756,11 +642,6 @@ summary(gender_rank)</code></pre>
 ## Residual standard error: 0.4716 on 257 degrees of freedom
 ## Multiple R-squared:  0.151,  Adjusted R-squared:  0.1411 
 ## F-statistic: 15.23 on 3 and 257 DF,  p-value: 3.747e-09</code></pre>
-<pre class="r"><code>#### coeffecient of gener changed from 0.3853 to  0.349481(around 10%,9.2%)
-## rank is  a potential confounder
-
-mulit_2=lm(log_sal~gender+dept+clin+rank+cert+prate+exper,data=data_2)
-summary(mulit_2)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = log_sal ~ gender + dept + clin + rank + cert + prate + 
@@ -791,9 +672,6 @@ summary(mulit_2)</code></pre>
 ## Residual standard error: 0.1335 on 248 degrees of freedom
 ## Multiple R-squared:  0.9343, Adjusted R-squared:  0.9311 
 ## F-statistic: 293.9 on 12 and 248 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code>## with very high adjR^2 in mulit_2
-
-anova(gender_only,mulit_2)</code></pre>
 <pre><code>## Analysis of Variance Table
 ## 
 ## Model 1: log_sal ~ gender
@@ -803,9 +681,6 @@ anova(gender_only,mulit_2)</code></pre>
 ## 2    248  4.423 11    53.548 272.97 &lt; 2.2e-16 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<pre class="r"><code>## the p is smaller than 0.05</code></pre>
-<pre class="r"><code>## check the vif (Collinearity)
-vif(mulit_2)</code></pre>
 <pre><code>##                      genderMale                  deptPhysiology 
 ##                        1.443762                        1.607184 
 ##                    deptGenetics                  deptPediatrics 
@@ -818,10 +693,6 @@ vif(mulit_2)</code></pre>
 ##                        2.225837                        1.329952 
 ##                           prate                           exper 
 ##                       16.626048                        1.884661</code></pre>
-<pre class="r"><code>## remove prate  (vif &gt;10)
-##then the model is
-gender_method1=lm(log_sal~gender+dept+clin+rank+cert+exper,data=data_2)
-summary(gender_method1)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = log_sal ~ gender + dept + clin + rank + cert + exper, 
@@ -851,13 +722,10 @@ summary(gender_method1)</code></pre>
 ## Residual standard error: 0.1337 on 249 degrees of freedom
 ## Multiple R-squared:  0.9339, Adjusted R-squared:  0.931 
 ## F-statistic: 319.7 on 11 and 249 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code>## but hard to find the stratified model, because the exper is continous variable</code></pre>
 <p>We are interested in the interaction effect of rank and experience. Is rank a modifier? Is experience a mpdifier?</p>
 </div>
 <div id="is-rank-a-modifier" class="section level1">
 <h1>Is rank a modifier?</h1>
-<pre class="r"><code>gender_inter_rank=lm(log_sal~gender * rank + dept+clin+cert+exper,data=data_2)
-summary(gender_inter_rank)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = log_sal ~ gender * rank + dept + clin + cert + exper, 
@@ -889,16 +757,6 @@ summary(gender_inter_rank)</code></pre>
 ## Residual standard error: 0.1325 on 247 degrees of freedom
 ## Multiple R-squared:  0.9355, Adjusted R-squared:  0.9322 
 ## F-statistic: 275.8 on 13 and 247 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code>##  then stratified the rank levels
-data_stra_assi=data_2 %&gt;% 
-  filter(rank==&quot;Assistant&quot;)
-data_stra_asso=data_2 %&gt;% 
-  filter(rank==&quot;Associate&quot;)
-data_stra_full=data_2 %&gt;% 
-  filter(rank==&quot;Full professor&quot;)
-## in assistant level
-model_stra1=lm(log_sal~gender+dept+clin+cert+exper,data=data_stra_assi)
-summary(model_stra1)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = log_sal ~ gender + dept + clin + cert + exper, data = data_stra_assi)
@@ -925,8 +783,6 @@ summary(model_stra1)</code></pre>
 ## Residual standard error: 0.1541 on 102 degrees of freedom
 ## Multiple R-squared:  0.9126, Adjusted R-squared:  0.9049 
 ## F-statistic: 118.3 on 9 and 102 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code>model_stra2=lm(log_sal~gender+dept+clin+cert+exper,data=data_stra_asso)
-summary(model_stra2)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = log_sal ~ gender + dept + clin + cert + exper, data = data_stra_asso)
@@ -953,8 +809,6 @@ summary(model_stra2)</code></pre>
 ## Residual standard error: 0.1033 on 54 degrees of freedom
 ## Multiple R-squared:  0.9621, Adjusted R-squared:  0.9558 
 ## F-statistic: 152.2 on 9 and 54 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code>model_stra3=lm(log_sal~gender+dept+clin+cert+exper,data=data_stra_full)
-summary(model_stra3)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = log_sal ~ gender + dept + clin + cert + exper, data = data_stra_full)
@@ -981,12 +835,9 @@ summary(model_stra3)</code></pre>
 ## Residual standard error: 0.1165 on 75 degrees of freedom
 ## Multiple R-squared:  0.9511, Adjusted R-squared:  0.9452 
 ## F-statistic: 161.9 on 9 and 75 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code># yes</code></pre>
 </div>
 <div id="is-experience-a-modifier" class="section level1">
 <h1>Is experience a modifier?</h1>
-<pre class="r"><code>gender_inter_exp = lm(log_sal~gender * exper + rank+dept+clin+cert+exper,data=data_2)
-summary(gender_inter_exp )</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = log_sal ~ gender * exper + rank + dept + clin + 
@@ -1017,8 +868,6 @@ summary(gender_inter_exp )</code></pre>
 ## Residual standard error: 0.1312 on 248 degrees of freedom
 ## Multiple R-squared:  0.9366, Adjusted R-squared:  0.9336 
 ## F-statistic: 305.4 on 12 and 248 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code>gender_inter_two=lm(log_sal~gender * rank + dept+clin+cert+exper+gender*exper,data=data_2)
-summary(gender_inter_two)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = log_sal ~ gender * rank + dept + clin + cert + exper + 
@@ -1051,12 +900,8 @@ summary(gender_inter_two)</code></pre>
 ## Residual standard error: 0.1315 on 246 degrees of freedom
 ## Multiple R-squared:  0.9368, Adjusted R-squared:  0.9332 
 ## F-statistic: 260.5 on 14 and 246 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code>## after putting two interaction, the rank becomes non-sig, so don&#39;t put rank as an interaction
-## but still put rank as counfounder.</code></pre>
 <div id="so-our-final-model-is" class="section level2">
 <h2>so our final model is</h2>
-<pre class="r"><code>gender_inter_exp=lm(log_sal~gender * exper +rank + dept + clin+cert,data=data_2)
-summary(gender_inter_exp)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = log_sal ~ gender * exper + rank + dept + clin + 
@@ -1087,8 +932,6 @@ summary(gender_inter_exp)</code></pre>
 ## Residual standard error: 0.1312 on 248 degrees of freedom
 ## Multiple R-squared:  0.9366, Adjusted R-squared:  0.9336 
 ## F-statistic: 305.4 on 12 and 248 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code>## stratify exp levels:
-summary(data_2)</code></pre>
 <pre><code>##                 dept       gender                             clin    
 ##  Molecular Biology:50   Female:106   Primarily research emphasis:101  
 ##  Physiology       :40   Male  :155   Primarily clinical emphasis:160  
@@ -1110,13 +953,6 @@ summary(data_2)</code></pre>
 ##                       Mean   :11.86  
 ##                       3rd Qu.:12.25  
 ##                       Max.   :13.01</code></pre>
-<pre class="r"><code>data_stra_exp=data_2 %&gt;% 
-  mutate(exper = as.factor(case_when(.$exper %in% c(0:5)~&quot;very small&quot;, 
-                            .$exper %in% c(6:10)~&quot;small&quot;,
-                            .$exper %in% c(11:14)~&quot;median&quot;,
-                            .$exper %in% c(15:37)~&quot;large&quot;)))
-gender_inter_exp_1=lm(log_sal~gender +rank + dept + clin+cert,data=data_stra_exp %&gt;% filter(exper==&quot;very small&quot;))
-summary(gender_inter_exp_1)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = log_sal ~ gender + rank + dept + clin + cert, data = data_stra_exp %&gt;% 
@@ -1144,8 +980,6 @@ summary(gender_inter_exp_1)</code></pre>
 ## Residual standard error: 0.1739 on 54 degrees of freedom
 ## Multiple R-squared:  0.8945, Adjusted R-squared:  0.8769 
 ## F-statistic: 50.88 on 9 and 54 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code>gender_inter_exp_2=lm(log_sal~gender +rank + dept + clin+cert,data=data_stra_exp %&gt;% filter(exper==&quot;small&quot;))
-summary(gender_inter_exp_2)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = log_sal ~ gender + rank + dept + clin + cert, data = data_stra_exp %&gt;% 
@@ -1174,8 +1008,6 @@ summary(gender_inter_exp_2)</code></pre>
 ## Residual standard error: 0.1135 on 86 degrees of freedom
 ## Multiple R-squared:  0.9506, Adjusted R-squared:  0.9449 
 ## F-statistic: 165.6 on 10 and 86 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code>gender_inter_exp_3=lm(log_sal~gender +rank + dept + clin+cert,data=data_stra_exp %&gt;% filter(exper==&quot;median&quot;))
-summary(gender_inter_exp_3)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = log_sal ~ gender + rank + dept + clin + cert, data = data_stra_exp %&gt;% 
@@ -1204,8 +1036,6 @@ summary(gender_inter_exp_3)</code></pre>
 ## Residual standard error: 0.131 on 37 degrees of freedom
 ## Multiple R-squared:  0.9471, Adjusted R-squared:  0.9328 
 ## F-statistic: 66.27 on 10 and 37 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code>gender_inter_exp_4=lm(log_sal~gender +rank + dept + clin+cert,data=data_stra_exp %&gt;% filter(exper==&quot;large&quot;))
-summary(gender_inter_exp_4)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = log_sal ~ gender + rank + dept + clin + cert, data = data_stra_exp %&gt;% 
@@ -1237,15 +1067,12 @@ summary(gender_inter_exp_4)</code></pre>
 </div>
 <div id="diaganosis" class="section level2">
 <h2>diaganosis</h2>
-<pre class="r"><code>par(mfrow = c(2, 2))
-plot(gender_inter_exp)</code></pre>
 <p><img src="salarycase_files/figure-html/unnamed-chunk-10-1.png" width="90%" /> ## meet the constant varience and normality assumption ## 184 maybe a potential influential point</p>
 </div>
 <div id="checking-outlier-and-influential" class="section level2">
 <h2>checking outlier and influential</h2>
 <div id="outlier-in-y" class="section level3">
 <h3>outlier in Y</h3>
-<pre class="r"><code>rstandard(gender_inter_exp)</code></pre>
 <pre><code>##             1             2             3             4             5 
 ## -0.6216377267 -0.7451818190 -0.3246763191 -0.4351554387  0.2818954252 
 ##             6             7             8             9            10 
@@ -1356,17 +1183,6 @@ plot(gender_inter_exp)</code></pre>
 </div>
 <div id="outlier-in-x" class="section level3">
 <h3>outlier in X</h3>
-<pre class="r"><code>hat=hatvalues(gender_inter_exp)
-hat2=hat %&gt;%
-data.frame()
-hat3=mutate(hat2,
-hii=hat2[,1])
-state_name=rownames(hat2) %&gt;%
-data.frame()
-state_name2= mutate(state_name,
-name=state_name[,1])
-hat_final=cbind(cbind(dplyr::select(state_name2,name),dplyr::select(hat3,hii)))
-hat_final</code></pre>
 <pre><code>##     name        hii
 ## 1      1 0.04357000
 ## 2      2 0.03902594
@@ -1629,8 +1445,6 @@ hat_final</code></pre>
 ## 259  259 0.04028979
 ## 260  260 0.05797656
 ## 261  261 0.04255786</code></pre>
-<pre class="r"><code>hat_final %&gt;%
-filter(hii&gt;0.2)</code></pre>
 <pre><code>## [1] name hii 
 ## &lt;0 rows&gt; (or 0-length row.names)</code></pre>
 </div>
@@ -1640,8 +1454,6 @@ filter(hii&gt;0.2)</code></pre>
 </div>
 <div id="influential-cases" class="section level2">
 <h2>influential cases</h2>
-<pre class="r"><code>c=influence.measures(gender_inter_exp)
-c</code></pre>
 <pre><code>## Influence measures of
 ##   lm(formula = log_sal ~ gender * exper + rank + dept + clin +      cert, data = data_2) :
 ## 
@@ -2434,9 +2246,6 @@ c</code></pre>
 </div>
 <div id="try-the-model-without-outlier" class="section level2">
 <h2>try the model without outlier</h2>
-<pre class="r"><code>data_no_184=data_2[-184,]
-gender_no_184=lm(log_sal~gender * exper +rank + dept + clin+cert,data=data_no_184)
-summary(gender_no_184)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = log_sal ~ gender * exper + rank + dept + clin + 
@@ -2470,8 +2279,6 @@ summary(gender_no_184)</code></pre>
 </div>
 <div id="model-changed-a-lot-so-it-is-an-influential-point" class="section level2">
 <h2>model changed a lot so it is an influential point</h2>
-<pre class="r"><code>par(mfrow = c(2, 2))
-plot(gender_no_184)</code></pre>
 <p><img src="salarycase_files/figure-html/unnamed-chunk-15-1.png" width="90%" /></p>
 </div>
 </div>
